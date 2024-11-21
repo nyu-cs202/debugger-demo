@@ -16,7 +16,7 @@
 #include <stdint.h>
 
 void wait_for_target(int pid);
-void continue_and_wait_for_target(int pid);
+void continue_on(int pid);
 void single_step(int pid);
 uint64_t set_breakpoint(int pid, uint64_t addr);
 void preserve_breakpoint_and_continue(int pid, uint64_t addr, uint64_t orig_instruction);
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     // original contents of the target's code at the memory location.
     uint64_t original = set_breakpoint(pid, STACK_LOAD);
     show_target_breakpoint(pid, STACK_LOAD);
-    continue_and_wait_for_target(pid);
+    continue_on(pid);
 
     set_x_in_target(pid, 202);
 
@@ -79,7 +79,7 @@ void wait_for_target(int pid)
     }
 }
 
-void continue_and_wait_for_target(int pid)
+void continue_on(int pid)
 {
     if (ptrace(PTRACE_CONT, pid, NULL, NULL) < 0)
         perror("ptrace continue");
@@ -131,9 +131,10 @@ void preserve_breakpoint_and_continue(int pid, uint64_t addr, uint64_t orig_inst
     // At this point, the target is past the breakpoint, so 
     // set the breakpoint again, and continue. If this were a real debugger
     // we would have to capture the return value of set_breakpoint, to be able
-    // to (again) restore the original instruction.
+    // to (again) restore the original instruction, in case it's
+    // different versus when we first captured it.
     set_breakpoint(pid, addr); 
-    continue_and_wait_for_target(pid);
+    continue_on(pid);
 }
 
 // Read %rip (with all other registers), decrement it in the local data structure, and
