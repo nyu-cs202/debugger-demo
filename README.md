@@ -8,7 +8,7 @@ the x86-64 version. If you wish to port the demo to ARM, please let me
 Go into your CS202 setup, clone this repository, and then enter Docker: 
 ```
 $ cd ~/cs202
-$ git clone <this repo> .
+$ git clone <this repo>
 $ ./cs202-run-docker
 ```
 
