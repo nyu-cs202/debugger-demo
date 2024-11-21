@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
     // When setting a breakpoint, we have to keep around the 
     // original contents of the target's code at the memory location.
-    long original = set_breakpoint(pid, STACK_LOAD);
+    uint64_t original = set_breakpoint(pid, STACK_LOAD);
     show_target_breakpoint(pid, STACK_LOAD);
     continue_and_wait_for_target(pid);
 
