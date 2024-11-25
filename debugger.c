@@ -103,8 +103,9 @@ uint64_t set_breakpoint(int pid, uint64_t addr)
     // The next lines insert an instruction in the target that raises an
     // exception. Specifically, on x86, 0xcc is a special instruction that
     // causes the CPU to raise the "breakpoint exception". 
-    uint64_t breakpoint_exception = ~0xff | 0xcc;  
-    if (ptrace(PTRACE_POKEDATA, pid, addr, breakpoint_exception) < 0)
+    uint64_t orig_upper_bytes = orig_instruction & ~(uint64_t)0xff;
+
+    if (ptrace(PTRACE_POKEDATA, pid, addr, orig_upper_bytes | 0xcc) < 0)
         perror("ptrace pokedata");
 
    return orig_instruction;
@@ -120,12 +121,7 @@ void preserve_breakpoint_and_continue(int pid, uint64_t addr, uint64_t orig_inst
     // below puts %rip where it should be.
     rewind_rip(pid);
 
-    // Single-step three times because the "breakpoint" stomped on 
-    // 8 bytes of instruction memory, crossing three instructions (this is
-    // gleaned from inspecting an assembly dump of the target).
-
-    single_step(pid);
-    single_step(pid);
+    // Execute the restored instruction
     single_step(pid);
 
     // At this point, the target is past the breakpoint, so 
