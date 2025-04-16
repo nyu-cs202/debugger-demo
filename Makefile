@@ -7,4 +7,4 @@ target: target.c
 	gcc -static -o $@ $<
 
 debugger: debugger.c
-	gcc -Wall -o $@ $<
+	gcc -g -Wall -o $@ $<
