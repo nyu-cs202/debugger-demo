@@ -32,11 +32,11 @@ observe the different output:
 
 ```
 $ ./debugger
-instruction at addr 0x401787 is now: 0xffffffffffffffcc
+instruction at addr 0x40189c is now: 0xb80000345fcc
 target: x = 10
 Checking: *(%rbp-4): 10
 Checking: *(%rbp-4): 202
-%rip in target is 0x401788 but we want it to be 0x401787
+%rip in target is 0x40189d but we want it to be 0x40189c
 target: x = 202
 target exited
 ```
