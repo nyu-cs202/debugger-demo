@@ -19,7 +19,7 @@ void wait_for_target(int pid);
 void continue_on(int pid);
 void single_step(int pid);
 uint64_t set_breakpoint(int pid, uint64_t addr);
-void preserve_breakpoint_and_continue(int pid, uint64_t addr, uint64_t orig_instruction);
+void preserve_brkpoint_and_continue(int pid, uint64_t addr, uint64_t orig_inst);
 void rewind_rip(int pid);
 void set_x_in_target(int pid, uint32_t val);
 void show_target_breakpoint(int pid, uint64_t addr);
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
     set_x_in_target(pid, 202);
 
-    preserve_breakpoint_and_continue(pid, STACK_LOAD, original);
+    preserve_brkpoint_and_continue(pid, STACK_LOAD, original);
 
     return 0;
 
@@ -111,14 +111,14 @@ uint64_t set_breakpoint(int pid, uint64_t addr)
    return orig_instruction;
 }
 
-void preserve_breakpoint_and_continue(int pid, uint64_t addr, uint64_t orig_instruction)
+void preserve_brkpoint_and_continue(int pid, uint64_t addr, uint64_t orig_inst)
 {
     // Write the original instruction back so it can execute
-    if (ptrace(PTRACE_POKEDATA, pid, addr, orig_instruction) < 0)
+    if (ptrace(PTRACE_POKEDATA, pid, addr, orig_inst) < 0)
         perror("ptrace pokedata");
 
-    // Right here, %rip is one past the instruction we wish to re-execute. The function 
-    // below puts %rip where it should be.
+    // Right here, %rip is one past the instruction we wish to re-execute. 
+    // The function below puts %rip where it should be.
     rewind_rip(pid);
 
     // Execute the restored instruction
@@ -133,8 +133,8 @@ void preserve_breakpoint_and_continue(int pid, uint64_t addr, uint64_t orig_inst
     continue_on(pid);
 }
 
-// Read %rip (with all other registers), decrement it in the local data structure, and
-// then set all of the registers, with the updated %rip.
+// Read %rip (with all other registers), decrement it in the local 
+// data structure, and then set all of the registers, with the updated %rip.
 void rewind_rip(int pid)
 {
     struct user_regs_struct regs;
