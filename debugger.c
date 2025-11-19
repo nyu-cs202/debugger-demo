@@ -28,7 +28,7 @@ void show_target_breakpoint(int pid, uint64_t addr);
 // the target) is read from the stack prior to the second printf.
 // That is the address below. That's a hack. A real debugger would infer
 // the address by examining debugging information (symbol tables and so on).
-#define STACK_LOAD 0x401887
+#define STACK_LOAD 0x4018a7
 
 int main(int argc, char** argv)
 {
